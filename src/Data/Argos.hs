@@ -1,4 +1,13 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module Data.Argos where
+
+import Control.Monad (forM_)
+import Data.Map (Map)
+import qualified Data.Map as Map
+import qualified Data.Map.Extra as Map
+import Data.Maybe (fromMaybe)
+import Control.Monad.Trans.State (execState, modify)
 
 data Argument
   = Command
@@ -9,3 +18,12 @@ data Argument
   { long :: String
   , short :: Maybe Char
   } deriving (Show, Eq)
+
+spread :: Argument -> Map Int [String]
+spread Option{}     = error "Cannot spread an option"
+spread Command {..} = flip execState (Map.singleton 0 [name]) $ forM_ arguments $ go 1
+ where
+  go depth Option {..}  = modify (Map.insertManyAppended depth (long : maybe [] (\s -> [[s]]) short))
+  go depth Command {..} = do
+    modify (Map.insertAppended depth name)
+    forM_ arguments $ go (depth + 1)

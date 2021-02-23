@@ -1,5 +1,1 @@
-import Test.Hspec
-import Language.Argos.ParserSpec
-
-main :: IO ()
-main = hspec spec
+{-# OPTIONS_GHC -F -pgmF hspec-discover #-}

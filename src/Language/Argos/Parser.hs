@@ -26,7 +26,7 @@ a ~> b = do
   return res
 
 whitespace :: Parser ()
-whitespace = spaces <|> skipMany newline
+whitespace = skipMany (space <|> newline)
 
 nameParser = many1 (alphaNum <|> char '-' <|> char '_')
 
@@ -57,5 +57,12 @@ commandParser = do
   whitespace
   char '{'
   whitespace
-  arguments <- sepBy (optionParser <|> commandParser) (char ',' <|> newline)
+  arguments <- (optionParser <|> commandParser) `sepBy` char ','
+  whitespace
+  char '}'
   return Command { .. }
+
+separator = char ',' <|> newline
+
+argosParser :: Parser [Argument]
+argosParser = commandParser `sepBy` separator
