@@ -7,7 +7,7 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import qualified Data.Map.Extra as Map
 import Data.Maybe (fromMaybe)
-import Control.Monad.Trans.State (execState, modify)
+import Control.Monad.Trans.State (execState, modify, State)
 
 data Argument
   = Command
@@ -20,10 +20,10 @@ data Argument
   } deriving (Show, Eq)
 
 spread :: Argument -> Map Int [String]
-spread Option{}     = error "Cannot spread an option"
-spread Command {..} = flip execState (Map.singleton 0 [name]) $ forM_ arguments $ go 1
+spread arg = flip execState Map.empty $ go 0 arg
  where
-  go depth Option {..}  = modify (Map.insertManyAppended depth (long : maybe [] (\s -> [[s]]) short))
+  go :: Int -> Argument -> State (Map Int [String]) ()
+  go depth Option {..}  = modify (Map.insertManyAppended depth (("--" ++ long) : maybe [] (\s -> ['-' : [s]]) short))
   go depth Command {..} = do
     modify (Map.insertAppended depth name)
     forM_ arguments $ go (depth + 1)
