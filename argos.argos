@@ -1,0 +1,4 @@
+command(compile) {
+    option(long(source), short(s)),
+    option(long(target), short(t))
+}

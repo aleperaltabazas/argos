@@ -38,6 +38,7 @@ shortParser = string "short" ~> char '(' ~> letter <~ char ')'
 
 optionParser :: Parser Argument
 optionParser = do
+  whitespace
   string "option" ~> char '('
   whitespace
   long <- longParser
@@ -49,6 +50,7 @@ optionParser = do
 
 commandParser :: Parser Argument
 commandParser = do
+  whitespace
   string "command" ~> char '('
   whitespace
   name <- nameParser
@@ -60,9 +62,8 @@ commandParser = do
   arguments <- (optionParser <|> commandParser) `sepBy` char ','
   whitespace
   char '}'
+  whitespace
   return Command { .. }
 
-separator = char ',' <|> newline
-
 argosParser :: Parser [Argument]
-argosParser = commandParser `sepBy` separator
+argosParser = commandParser `sepBy` newline

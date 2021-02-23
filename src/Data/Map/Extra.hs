@@ -1,6 +1,7 @@
 module Data.Map.Extra
   ( insertAppended
   , insertManyAppended
+  , mapToList
   )
 where
 
@@ -18,3 +19,6 @@ insertManyAppended k vs = do
   currentVs <- Map.lookup k
   let newVs = maybe vs (++ vs) currentVs
   Map.insert k newVs
+
+mapToList :: (k -> v -> u) -> Map k v -> [u]
+mapToList f = map (uncurry f) . Map.toList
