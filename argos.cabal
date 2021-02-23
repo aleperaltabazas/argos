@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1ff5160fedb008649545fdd46c5c9e79999279da96fc2cb74731486f923968c6
+-- hash: 8edf91ed7bc169e7b03f19fee5df1977ad2029067a2a81c667871a998119e534
 
 name:           argos
 version:        0.1.0.0
@@ -67,6 +67,7 @@ test-suite argos-test
   other-modules:
       Data.ArgosSpec
       Data.Map.ExtraSpec
+      Language.Argos.AutoComplete.WriterSpec
       Language.Argos.ParserSpec
       Paths_argos
   hs-source-dirs:

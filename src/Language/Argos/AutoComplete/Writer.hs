@@ -23,7 +23,6 @@ writeNode n argos =
 \      ;;"
  where
   writeCase Argos { previous = Just prev, ..} =
-    "\
-\        " ++ prev ++ ")\n\
+    "        " ++ prev ++ ")\n\
 \          COMREPLY=($(compgen -W \"" ++ current ++ "\" -- ${cur}))\n\
 \          ;;"

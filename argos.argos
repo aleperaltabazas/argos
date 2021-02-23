@@ -1,4 +1,5 @@
 command(compile) {
+    option(long(help), short(h)),
     option(long(source), short(s)),
     option(long(target), short(t))
 }
