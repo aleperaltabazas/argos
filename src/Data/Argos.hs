@@ -4,6 +4,7 @@
 module Data.Argos
   ( Argument(..)
   , Argos(..)
+  , ArgosTree
   , spread
   , merge
   )
@@ -34,7 +35,9 @@ data Argos
   , current :: String
   } deriving (Show, Eq)
 
-spread :: Argument -> Map Int [Argos]
+type ArgosTree = Map Int [Argos]
+
+spread :: Argument -> ArgosTree
 spread arg = simplify $ flip execState Map.empty $ go Nothing 0 arg
  where
   go previous depth opt@Option {..} = modify (Map.insertAppended depth (Argos previous (asOption opt)))
@@ -43,10 +46,10 @@ spread arg = simplify $ flip execState Map.empty $ go Nothing 0 arg
     forM_ arguments $ go (Just name) (depth + 1)
   asOption Option {..} = ("--" ++ long) ++ maybe "" (\s -> " -" ++ [s]) short
 
-merge :: Map Int [Argos] -> Map Int [Argos] -> Map Int [Argos]
+merge :: ArgosTree -> ArgosTree -> ArgosTree
 merge xs ys = flip execState xs $ forM_ (Map.toList ys) $ \(depth, values) -> modify $ Map.insertManyAppended depth values
 
-simplify :: Map Int [Argos] -> Map Int [Argos]
+simplify :: ArgosTree -> ArgosTree
 simplify = Map.mapWithKey go
  where
   go :: Int -> [Argos] -> [Argos]

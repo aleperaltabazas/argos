@@ -1,5 +1,5 @@
 #/usr/bin/env bash
-argos_completions()
+_argos_completions()
 {
   local cur prev
 
@@ -23,4 +23,4 @@ argos_completions()
   esac
 }
 
-complete -F argos_completions argos
+complete -F _argos_completions argos
