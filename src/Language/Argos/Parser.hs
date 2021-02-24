@@ -59,11 +59,11 @@ commandParser = do
   whitespace
   char '{'
   whitespace
-  arguments <- (optionParser <|> commandParser) `sepBy` char ','
+  arguments <- (try commandParser <|> try optionParser) `sepBy` char ','
   whitespace
   char '}'
   whitespace
   return Command { .. }
 
 argosParser :: Parser [Argument]
-argosParser = commandParser `sepBy` (whitespace >> newline << whitespace)
+argosParser = many1 commandParser

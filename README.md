@@ -6,7 +6,7 @@
 
 `argos` is a command line tool to programatically generate an autocompletion script from a tree like-structure of arbitrary depth. For instance, this is how you'd describe (albeit just a tiny little bit) git with argos:
 ```argos
-command(status)
+command(status) {}
 command(push) {
     option(long(force), short(f)),
     option(long(all)),
@@ -18,8 +18,8 @@ command(remote) {
         option(long(tags))
     },
     command(prune) {
-        option(long(dry-run), (n))
-    }
+        option(long(dry-run), short(n))
+    },
     option(long(help), short(h))
 }
 ```

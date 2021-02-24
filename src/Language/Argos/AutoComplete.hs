@@ -15,7 +15,7 @@ import Language.Argos.Parser (argosParser)
 import Text.Parsec (ParseError, parse)
 
 parseArgos :: String -> Either ParseError ArgosTree
-parseArgos = (foldl1 merge . map spread <$>) . parse argosParser "argos"
+parseArgos = (foldl merge Map.empty . map spread <$>) . parse argosParser "argos"
 
 parseArgosFile :: FilePath -> IO (Either ParseError ArgosTree)
 parseArgosFile = (parseArgos <$>) . readFile
