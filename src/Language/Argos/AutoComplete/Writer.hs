@@ -5,10 +5,9 @@ module Language.Argos.AutoComplete.Writer
   )
 where
 
-import Data.Argos
+import Data.Argos (Argos(..))
 import Data.Map (Map)
-import Data.Map.Extra
-import Data.List
+import Data.List (intercalate)
 
 writeNode :: Int -> [Argos] -> String
 writeNode 0 argos = "    1)\n      COMPREPLY=($(compgen -W \"" ++ (unwords . map current $ argos) ++ "\" -- ${cur}))\n      ;;"

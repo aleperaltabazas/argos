@@ -6,14 +6,13 @@ module Language.Argos.AutoComplete
 where
 
 import Control.Monad ((=<<))
-import Data.Argos
-import Data.List
-import Data.List.Extra
+import Data.Argos (ArgosTree, spread, merge)
+import Data.List (intercalate)
 import Data.Map (Map)
 import qualified Data.Map as Map
-import Language.Argos.AutoComplete.Writer
-import Language.Argos.Parser
-import Text.Parsec
+import Language.Argos.AutoComplete.Writer (writeNode)
+import Language.Argos.Parser (argosParser)
+import Text.Parsec (ParseError, parse)
 
 parseArgos :: String -> Either ParseError ArgosTree
 parseArgos = (foldl1 merge . map spread <$>) . parse argosParser "argos"

@@ -13,7 +13,6 @@ where
 import Control.Monad (forM_, guard)
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.State (execState, modify, State, get)
-import Data.List.Extra (mapIf)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import qualified Data.Map.Extra as Map
@@ -58,3 +57,7 @@ simplify = Map.mapWithKey go
     if any (\a -> previous a == previous arg) curr
       then modify $ mapIf (\a -> previous a == previous arg) (\a -> a { current = current a ++ " " ++ current arg })
       else modify (++ [arg])
+
+mapIf :: (a -> Bool) -> (a -> a) -> [a] -> [a]
+mapIf cond f = map (\x -> if cond x then f x else x)
+
