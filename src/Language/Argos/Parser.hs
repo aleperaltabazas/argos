@@ -66,4 +66,4 @@ commandParser = do
   return Command { .. }
 
 argosParser :: Parser [Argument]
-argosParser = commandParser `sepBy` newline
+argosParser = commandParser `sepBy` (whitespace >> newline << whitespace)

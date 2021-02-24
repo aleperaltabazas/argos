@@ -35,6 +35,7 @@ main = do
   opts <- execParser $ info (argosCommandParser <**> helper) (fullDesc <> header "Argos - autocompletion script generator")
   case opts of
     Compile CompileOptions {..} -> do
+      putStrLn "Parsing file..."
       result <- parseArgosFile source
       case result of
         Left err -> do
@@ -43,6 +44,7 @@ main = do
         Right a -> do
           let script = autocompleteScript progName a
           writeFile target script
+          putStrLn "Done!"
 
 makeInfo :: String -> Parser a -> ParserInfo a
 makeInfo desc parser = info (parser <**> helper) (progDesc desc)
