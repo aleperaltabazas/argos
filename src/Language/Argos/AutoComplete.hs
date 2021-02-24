@@ -21,20 +21,23 @@ parseArgos = (foldl1 merge . map spread <$>) . parse argosParser "argos"
 parseArgosFile :: FilePath -> IO (Either ParseError ArgosTree)
 parseArgosFile = (parseArgos <$>) . readFile
 
-autocompleteScript :: ArgosTree -> String -> String
-autocompleteScript tree progName =
+autocompleteScript :: String -> ArgosTree -> String
+autocompleteScript progName tree =
   "#/usr/bin/env bash\n\
 \"
     ++ progNameCompletion
-    ++ "\n\
+    ++ "()\n\
 \{\n\
 \  local cur prev\n\
 \\n\
-\  case ${COMP_WORDS} in\n"
+\  cur=${COMP_WORDS[COMP_CWORD]}\n\
+\  prev=${COMP_WORDS[COMP_CWORD-1]}\n\
+\\n\
+\  case ${COMP_CWORD} in\n"
     ++ (intercalate "\n" . mapToList writeNode $ tree)
     ++ "\n\
 \    *)\n\
-\      COMREPLY=()\n\
+\      COMPREPLY=()\n\
 \      ;;\n\
 \  esac\n\
 \}\n\
@@ -43,7 +46,7 @@ autocompleteScript tree progName =
     ++ progNameCompletion
     ++ " "
     ++ progName
-  where progNameCompletion = "_" ++ progName ++ "_completions()"
+  where progNameCompletion = "_" ++ progName ++ "_completions"
 
 mapToList :: (k -> v -> u) -> Map k v -> [u]
 mapToList f = map (uncurry f) . Map.toList

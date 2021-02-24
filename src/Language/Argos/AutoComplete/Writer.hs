@@ -11,7 +11,7 @@ import Data.Map.Extra
 import Data.List
 
 writeNode :: Int -> [Argos] -> String
-writeNode 0 argos = "    1)\n      COMREPLY=($(compgen -W \"" ++ (unwords . map current $ argos) ++ "\" -- ${cur}))\n      ;;"
+writeNode 0 argos = "    1)\n      COMPREPLY=($(compgen -W \"" ++ (unwords . map current $ argos) ++ "\" -- ${cur}))\n      ;;"
 writeNode n argos =
   "    "
     ++ show (n + 1)
@@ -24,5 +24,5 @@ writeNode n argos =
  where
   writeCase Argos { previous = Just prev, ..} =
     "        " ++ prev ++ ")\n\
-\          COMREPLY=($(compgen -W \"" ++ current ++ "\" -- ${cur}))\n\
+\          COMPREPLY=($(compgen -W \"" ++ current ++ "\" -- ${cur}))\n\
 \          ;;"

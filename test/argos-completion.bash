@@ -13,7 +13,7 @@ _argos_completions()
     2)
       case ${prev} in
         compile)
-          COMPREPLY=($(compgen -W "-h --help --source -s --target -t" -- ${cur}))
+          COMPREPLY=($(compgen -W "--help -h --source -s --target -t" -- ${cur}))
           ;;
       esac
       ;;
