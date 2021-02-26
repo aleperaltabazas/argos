@@ -3,6 +3,7 @@
 module Language.Argos.Parser where
 
 import Data.Argos
+import Data.Maybe
 import Text.Parsec
 import Text.Parsec.String (Parser)
 
@@ -26,7 +27,7 @@ a ~> b = do
   return res
 
 whitespace :: Parser ()
-whitespace = skipMany (space <|> newline)
+whitespace = spaces
 
 nameParser = many1 (alphaNum <|> char '-' <|> char '_')
 
@@ -57,13 +58,19 @@ commandParser = do
   whitespace
   char ')'
   whitespace
-  char '{'
-  whitespace
-  arguments <- (try commandParser <|> try optionParser) `sepBy` char ','
-  whitespace
-  char '}'
-  whitespace
+  arguments <- fromMaybe [] <$> optionMaybe nonEmptyCommandParser
+  spaces
   return Command { .. }
+ where
+  nonEmptyCommandParser = do
+    whitespace
+    char '{'
+    whitespace
+    arguments <- (try commandParser <|> try optionParser) `sepBy` char ','
+    whitespace
+    char '}'
+    whitespace
+    return arguments
 
 argosParser :: Parser [Argument]
 argosParser = many1 commandParser

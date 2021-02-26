@@ -46,6 +46,5 @@ spec = describe "Language.Argos.Parser" $ do
         `shouldBe` Right Command { name = "blah", arguments = [Option { long = "foo", short = Nothing }] }
       parse commandParser "command" "command(blah){\n  command(foo){}\n}"
         `shouldBe` Right Command { name = "blah", arguments = [Command { name = "foo", arguments = [] }] }
-    it "fails" $ do
-      parse commandParser "command" "command() {}" `shouldSatisfy` isLeft
-      parse commandParser "command" "command(blah)" `shouldSatisfy` isLeft
+      parse commandParser "command" "command(blah)" `shouldBe` Right Command { name = "blah", arguments = [] }
+    it "fails" $ parse commandParser "command" "command() {}" `shouldSatisfy` isLeft

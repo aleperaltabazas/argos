@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5826f1e19e5318b6c55228f3611ad78845046fd1b5d7940f4a65dae598c1870c
+-- hash: 587a7970cf40ca7e46722513f0fa3ec25b7b364e78a8beb56312df2d0fd3a8b6
 
 name:           argos
-version:        0.1.0.0
+version:        1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/argos#readme>
 homepage:       https://github.com/githubuser/argos#readme
 bug-reports:    https://github.com/githubuser/argos/issues
