@@ -1,6 +1,9 @@
 {-# LANGUAGE QuasiQuotes #-}
 
-module Language.Argos.Compile where
+module Language.Argos.Compile
+  ( compile
+  )
+where
 
 import Data.Argos (Argument)
 import Data.String.Interpolate (i)

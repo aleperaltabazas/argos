@@ -4,11 +4,7 @@
 module Main where
 
 import Argos (compile, complete, parseArgosFile)
-import Data.List.Split
 import Options.Applicative
-import System.Environment
-import System.Exit
-import System.Directory
 
 data ArgosCommand
   = Compile CompileOptions
@@ -68,7 +64,3 @@ main = do
 
 makeInfo :: String -> Parser a -> ParserInfo a
 makeInfo desc parser = info (parser <**> helper) (progDesc desc)
-
-argosFile prog = do
-  h <- getHomeDirectory
-  return $ h ++ "/.config/argos/" ++ prog ++ ".argos"

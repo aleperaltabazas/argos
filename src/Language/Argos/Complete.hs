@@ -1,6 +1,9 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Language.Argos.Complete where
+module Language.Argos.Complete
+  ( complete
+  )
+where
 
 import Control.Applicative
 import Data.Argos
