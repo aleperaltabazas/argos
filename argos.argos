@@ -1,10 +1,11 @@
 command(compile) {
   option(long(help), short(h)),
-  option(long(source), short(s)),
-  option(long(target), short(t))
+  option(long(source), short(s))
 }
 
 command(complete) {
   option(long(help), short(h)),
   option(long(options), short(o))
 }
+
+option(long(help), short(h))

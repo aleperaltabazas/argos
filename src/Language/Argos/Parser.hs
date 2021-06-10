@@ -18,4 +18,4 @@ parseArgosFile :: FilePath -> IO (Either ParseError [Argument])
 parseArgosFile = (parseArgos <$>) . readFile
 
 argosParser :: Parser [Argument]
-argosParser = many1 commandParser
+argosParser = many1 (commandParser <|> optionParser)
