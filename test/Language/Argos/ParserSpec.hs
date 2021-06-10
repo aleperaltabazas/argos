@@ -4,7 +4,7 @@ module Language.Argos.ParserSpec
 where
 
 import Data.Argos
-import Language.Argos.Parser
+import Language.Argos.Parser.Internal
 import Text.Parsec
 import Test.Hspec
 

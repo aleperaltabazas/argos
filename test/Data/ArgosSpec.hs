@@ -11,21 +11,21 @@ spec :: Spec
 spec = describe "ArgosSpec" $ do
   describe "spread" $ do
     it "returns the long option with two dashes at the beginning" $ do
-      spread Option { long = "foo", short = Nothing } `shouldBe` Map.fromList [(0, [Argos Nothing "--foo"])]
-      spread Option { long = "bar", short = Nothing } `shouldBe` Map.fromList [(0, [Argos Nothing "--bar"])]
+      spread Option { long = "foo", short = Nothing } `shouldBe` Map.fromList [(0, [Layer Nothing "--foo"])]
+      spread Option { long = "bar", short = Nothing } `shouldBe` Map.fromList [(0, [Layer Nothing "--bar"])]
     it "returns the long option with two dashes at the beginning and the short option with one" $ do
-      spread Option { long = "foo", short = Just 'f' } `shouldBe` Map.fromList [(0, [Argos Nothing "--foo -f"])]
-      spread Option { long = "bar", short = Just 'b' } `shouldBe` Map.fromList [(0, [Argos Nothing "--bar -b"])]
+      spread Option { long = "foo", short = Just 'f' } `shouldBe` Map.fromList [(0, [Layer Nothing "--foo -f"])]
+      spread Option { long = "bar", short = Just 'b' } `shouldBe` Map.fromList [(0, [Layer Nothing "--bar -b"])]
     it "returns a map of length one" $ do
-      spread Command { name = "foo", arguments = [] } `shouldBe` Map.fromList [(0, [Argos Nothing "foo"])]
-      spread Command { name = "bar", arguments = [] } `shouldBe` Map.fromList [(0, [Argos Nothing "bar"])]
+      spread Command { name = "foo", arguments = [] } `shouldBe` Map.fromList [(0, [Layer Nothing "foo"])]
+      spread Command { name = "bar", arguments = [] } `shouldBe` Map.fromList [(0, [Layer Nothing "bar"])]
     it "returns a map of length two" $ do
       spread Command { name = "foo", arguments = [Option "bar" Nothing] }
-        `shouldBe` Map.fromList [(0, [Argos Nothing "foo"]), (1, [Argos (Just "foo") "--bar"])]
+        `shouldBe` Map.fromList [(0, [Layer Nothing "foo"]), (1, [Layer (Just "foo") "--bar"])]
       spread Command { name = "bar", arguments = [Command "foo" []] }
-        `shouldBe` Map.fromList [(0, [Argos Nothing "bar"]), (1, [Argos (Just "bar") "foo"])]
+        `shouldBe` Map.fromList [(0, [Layer Nothing "bar"]), (1, [Layer (Just "bar") "foo"])]
       spread Command { name = "foo", arguments = [Option "bar" Nothing, Option "baz" Nothing] }
-        `shouldBe` Map.fromList [(0, [Argos Nothing "foo"]), (1, [Argos (Just "foo") "--bar --baz"])]
+        `shouldBe` Map.fromList [(0, [Layer Nothing "foo"]), (1, [Layer (Just "foo") "--bar --baz"])]
     it "returns a map of length four" $ do
       let
         c = Command
@@ -43,30 +43,30 @@ spec = describe "ArgosSpec" $ do
             ]
           }
       spread c `shouldBe` Map.fromList
-        [ (0, [Argos Nothing "foo"])
-        , (1, [Argos (Just "foo") "bar grault"])
-        , (2, [Argos (Just "bar") "baz --biz qux", Argos (Just "grault") "--garply"])
-        , (3, [Argos (Just "qux") "--corge"])
+        [ (0, [Layer Nothing "foo"])
+        , (1, [Layer (Just "foo") "bar grault"])
+        , (2, [Layer (Just "bar") "baz --biz qux", Layer (Just "grault") "--garply"])
+        , (3, [Layer (Just "qux") "--corge"])
         ]
   describe "merge" $ do
     it "is an empty map" $ merge Map.empty Map.empty `shouldBe` Map.empty
     it "mixes both maps with no key merging"
       $          merge
-                   (Map.fromList [(0, [Argos Nothing "foo"]), (2, [Argos Nothing "baz"])])
-                   (Map.fromList [(1, [Argos Nothing "bar"]), (3, [Argos Nothing "biz"])])
+                   (Map.fromList [(0, [Layer Nothing "foo"]), (2, [Layer Nothing "baz"])])
+                   (Map.fromList [(1, [Layer Nothing "bar"]), (3, [Layer Nothing "biz"])])
       `shouldBe` Map.fromList
-                   [ (0, [Argos Nothing "foo"])
-                   , (1, [Argos Nothing "bar"])
-                   , (2, [Argos Nothing "baz"])
-                   , (3, [Argos Nothing "biz"])
+                   [ (0, [Layer Nothing "foo"])
+                   , (1, [Layer Nothing "bar"])
+                   , (2, [Layer Nothing "baz"])
+                   , (3, [Layer Nothing "biz"])
                    ]
     it "merges the values with the same key"
       $          merge
-                   (Map.fromList [(0, [Argos Nothing "foo"]), (1, [Argos Nothing "bar"]), (2, [Argos Nothing "qux quux"])])
-                   (Map.fromList [(1, [Argos Nothing "baz"]), (3, [Argos Nothing "corge"])])
+                   (Map.fromList [(0, [Layer Nothing "foo"]), (1, [Layer Nothing "bar"]), (2, [Layer Nothing "qux quux"])])
+                   (Map.fromList [(1, [Layer Nothing "baz"]), (3, [Layer Nothing "corge"])])
       `shouldBe` Map.fromList
-                   [ (0, [Argos Nothing "foo"])
-                   , (1, [Argos Nothing "bar", Argos Nothing "baz"])
-                   , (2, [Argos Nothing "qux quux"])
-                   , (3, [Argos Nothing "corge"])
+                   [ (0, [Layer Nothing "foo"])
+                   , (1, [Layer Nothing "bar", Layer Nothing "baz"])
+                   , (2, [Layer Nothing "qux quux"])
+                   , (3, [Layer Nothing "corge"])
                    ]

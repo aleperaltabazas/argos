@@ -3,10 +3,11 @@
 
 module Data.Argos
   ( Argument(..)
-  , Argos(..)
-  , ArgosTree
+  , Layer(..)
+  , LayeredArguments
   , spread
   , merge
+  , layered
   )
 where
 
@@ -16,7 +17,7 @@ import Control.Monad.Trans.State (execState, modify, State, get)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import qualified Data.Map.Extra as Map
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, fromJust)
 
 data Argument
   = Command
@@ -26,38 +27,40 @@ data Argument
   | Option
   { long :: String
   , short :: Maybe Char
-  } deriving (Show, Eq)
+  } deriving (Show, Eq, Read)
 
-data Argos
-  = Argos
+data Layer
+  = Layer
   { previous :: Maybe String
   , current :: String
   } deriving (Show, Eq)
 
-type ArgosTree = Map Int [Argos]
+type LayeredArguments = Map Int [Layer]
 
-spread :: Argument -> ArgosTree
+layered :: [Argument] -> LayeredArguments
+layered = foldl merge Map.empty . map spread
+
+spread :: Argument -> LayeredArguments
 spread arg = simplify $ flip execState Map.empty $ go Nothing 0 arg
  where
-  go previous depth opt@Option {..} = modify (Map.insertAppended depth (Argos previous (asOption opt)))
+  go previous depth opt@Option {..} = modify (Map.insertAppended depth (Layer previous (asOption opt)))
   go previous depth Command {..}    = do
-    modify (Map.insertAppended depth (Argos previous name))
+    modify (Map.insertAppended depth (Layer previous name))
     forM_ arguments $ go (Just name) (depth + 1)
   asOption Option {..} = ("--" ++ long) ++ maybe "" (\s -> " -" ++ [s]) short
 
-merge :: ArgosTree -> ArgosTree -> ArgosTree
+merge :: LayeredArguments -> LayeredArguments -> LayeredArguments
 merge xs ys = flip execState xs $ forM_ (Map.toList ys) $ \(depth, values) -> modify $ Map.insertManyAppended depth values
 
-simplify :: ArgosTree -> ArgosTree
+simplify :: LayeredArguments -> LayeredArguments
 simplify = Map.mapWithKey go
  where
-  go :: Int -> [Argos] -> [Argos]
+  go :: Int -> [Layer] -> [Layer]
   go key argos = flip execState [] $ forM_ argos $ \arg -> do
     curr <- get
     if any (\a -> previous a == previous arg) curr
       then modify $ mapIf (\a -> previous a == previous arg) (\a -> a { current = current a ++ " " ++ current arg })
       else modify (++ [arg])
 
-mapIf :: (a -> Bool) -> (a -> a) -> [a] -> [a]
-mapIf cond f = map (\x -> if cond x then f x else x)
 
+  mapIf cond f = map (\x -> if cond x then f x else x)

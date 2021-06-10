@@ -15,6 +15,7 @@ fi
 
 stack install
 mv ~/.local/bin/argos-exe ~/.local/bin/argos
-sudo argos compile argos -s ./argos.argos -t /etc/bash_completion.d/argos-completion.bash
+~/.local/bin/argos compile argos -s ./argos.argos
+sudo mv argos-completion.bash /etc/bash_completion.d/argos-completion.bash
 
 echo -e "${GREEN} Argos installed successfully!"

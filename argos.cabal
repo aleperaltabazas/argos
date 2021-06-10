@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 587a7970cf40ca7e46722513f0fa3ec25b7b364e78a8beb56312df2d0fd3a8b6
+-- hash: 1816ba9977c6d0919ec203cf5274e9bc9c161a982263122e7a5083956a83dc4b
 
 name:           argos
 version:        1.0.0
@@ -30,10 +30,11 @@ library
       Argos
       Data.Argos
       Data.Map.Extra
-      Language.Argos.AutoComplete
-      Language.Argos.AutoComplete.Writer
+      Language.Argos.Compile
+      Language.Argos.Complete
+      Language.Argos.Config
       Language.Argos.Parser
-      Lib
+      Language.Argos.Parser.Internal
   other-modules:
       Paths_argos
   hs-source-dirs:
@@ -41,9 +42,12 @@ library
   build-depends:
       base >=4.7 && <5
     , containers <=0.6.4.1
+    , directory <=1.3.6.0
     , hspec
     , optparse-applicative <=0.16.1.0
     , parsec <=3.1.14.0
+    , split <=0.2.3.4
+    , string-interpolate <=0.2.1.0
     , transformers <=0.5.6.2
   default-language: Haskell2010
 
@@ -58,9 +62,12 @@ executable argos-exe
       argos
     , base >=4.7 && <5
     , containers <=0.6.4.1
+    , directory <=1.3.6.0
     , hspec
     , optparse-applicative <=0.16.1.0
     , parsec <=3.1.14.0
+    , split <=0.2.3.4
+    , string-interpolate <=0.2.1.0
     , transformers <=0.5.6.2
   default-language: Haskell2010
 
@@ -70,8 +77,6 @@ test-suite argos-test
   other-modules:
       Data.ArgosSpec
       Data.Map.ExtraSpec
-      Language.Argos.AutoComplete.WriterSpec
-      Language.Argos.AutoCompleteSpec
       Language.Argos.ParserSpec
       Paths_argos
   hs-source-dirs:
@@ -81,8 +86,11 @@ test-suite argos-test
       argos
     , base >=4.7 && <5
     , containers <=0.6.4.1
+    , directory <=1.3.6.0
     , hspec
     , optparse-applicative <=0.16.1.0
     , parsec <=3.1.14.0
+    , split <=0.2.3.4
+    , string-interpolate <=0.2.1.0
     , transformers <=0.5.6.2
   default-language: Haskell2010

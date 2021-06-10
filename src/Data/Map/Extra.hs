@@ -8,10 +8,7 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 
 insertAppended :: Ord k => k -> v -> Map k [v] -> Map k [v]
-insertAppended k v = do
-  vs <- Map.lookup k
-  let newVs = maybe [v] (++ [v]) vs
-  Map.insert k newVs
+insertAppended k v = insertManyAppended k [v]
 
 insertManyAppended :: Ord k => k -> [v] -> Map k [v] -> Map k [v]
 insertManyAppended k vs = do
