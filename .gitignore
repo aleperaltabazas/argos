@@ -54,3 +54,4 @@ cabal.project.local~
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/haskell,visualstudiocode,linux
+argos-test-completion.bash

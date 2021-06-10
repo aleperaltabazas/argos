@@ -12,6 +12,7 @@ import Test.Hspec
 cleanup = do
   h <- getHomeDirectory
   removeFile [i|#{h}/.config/argos/argos-test.data|]
+  removeFile "argos-test-completion.bash"
 
 setup = do
   (Right args) <- parseArgosFile "argos.argos"

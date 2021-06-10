@@ -11,6 +11,7 @@ import Test.Hspec
 cleanup = do
   h <- getHomeDirectory
   removeFile [i|#{h}/.config/argos/argos-test.data|]
+  removeFile "argos-test-completion.bash"
 
 spec :: Spec
 spec = afterAll_ cleanup $ describe "compile" $ it "saves the show of the parsed arguments at ~/.config/argos" $ do
