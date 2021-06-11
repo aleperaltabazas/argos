@@ -1,40 +1,120 @@
-# Argos
+Argos
+===
 
 <p align="center">
   <img width="512" src="https://previews.123rf.com/images/ververidis/ververidis1902/ververidis190200181/117571543-aerial-view-of-larisa-castle-in-argos-city-at-peloponnese-peninsula-greece.jpg" />
 </p>
 
-`argos` is a command line tool to programatically generate an autocompletion script from a tree like-structure of arbitrary depth. For instance, this is how you'd describe (albeit just a tiny little bit) git with argos:
+# Contents
+- [Argos](#argos)
+- [Contents](#contents)
+  - [Introduction](#introduction)
+  - [Installation and Usage](#installation-and-usage)
+  - [Syntax](#syntax)
+
+## Introduction
+
+`argos` is a command line tool to programatically generate an autocompletion script from a tree-like structure of arbitrary depth. 
+
+## Installation and Usage
+
+Argos is provided both as a command-line tool as well as a Haskell library. To install the CLI, clone the repo and compile the program with the installer `install.sh`.
+
+For the Haskell library, you can install it with either `cabal install argos` or `stack install argos`, and the following imports:
+```hs
+import Argos
+```
+
+## Syntax
+
+Argos uses a very simple language but expressive language to describe the program arguments' order. For instance, let's take a look at [argos' structure](argos.argos):
 ```argos
-command(status) {}
-command(push) {
-    option(long(force), short(f)),
-    option(long(all)),
-    option(long(tags))
+command(compile) {
+  option(long(help), short(h)),
+  option(long(source), short(s), argument(files(.*[.]argos)))
 }
-command(remote) {
-    command(add) {
-        option(long(fetch), short(f)),
-        option(long(tags))
-    },
-    command(prune) {
-        option(long(dry-run), short(n))
-    },
-    option(long(help), short(h))
+
+command(complete) {
+  option(long(help), short(h)),
+  option(long(options), short(o))
 }
+
+option(long(help), short(h))
 ```
 
-This will yield an autocompletion script so that when typing `git`, the available autocomplete will be `status`, `push` and `remote`. Furthermore, completing one of these will lock out the other options:
+This will yield an autocompletion script so that when typing `argos`, the available autocomplete will be `compile`, `complete`, `-h` and `--help`. Furthermore, completing one of these will lock out the other options:
 ```bash
-$ git remote <TAB><TAB>
-add        prune        --help        -h
+$ argos <TAB> <TAB>
+compile        complete        --help        -h
 
-$ git remote add <TAB><TAB>
---fetch        -f        --tags
+$ git compile <TAB> <TAB>
+--help        -h        --source        -s
 ```
 
-## Usage
+Argos makes a distinction between commands and options, each denoted by their respective keyword. Commands only need its name, and can then be expanded upon with their options and sub-commands inside braces. As options commonly have a long and short version, they are specified in the `option` keyword. The `long` is required, but the `short` isn't.
 
-An installer script is provided in this repo. Simply run `./install.sh` after cloning to compile the binaries and install the program in your machine. Once that's done, to generate your autocompletion script with argos run `argos compile <PROGNAME> -s <SOURCE> -t <TARGET>` and move your new file to `/etc/bash_completion.d/`.
+Moreover, options can receive an optional `argument`. This can be one of `directories` or `files`. The first one will return all directories in current directory when the option is completed and autocomplete is prompted:
+```argos
+command(example) {
+  option(long(dir), argument(directories)),
+}
+```
 
-By convention, argos files should end with the extension `.argos`, but there are no requirements over that.
+```bash
+$ l
+bin/       tests/
+documents/ workspace/
+downloads/
+
+$ example --dir <TAB><TAB>
+bin/
+documents/
+downloads/
+tests/
+workspace/
+
+$ example --dir do<TAB><TAB>
+documents/
+downloads/
+```
+
+Meanwhile, `files` can receive an optional regex to filter files. If no regex is supplied, all files are listed:
+```argos
+command(example) {
+  options(long(files), argument(files)),
+  options(long(argos-files), arguments(files(.*[.]argos)))
+}
+```
+
+```bash
+$ l
+bar       foo
+bar.argos foo.argos
+baz.argos qux
+
+$ example --files <TAB><TAB>
+bar
+bar.argos
+baz.argos
+foo
+foo.argos
+qux
+
+$ example --files ba<TAB><TAB>
+bar
+bar.argos
+baz.argos
+
+$ example --argos-files <TAB><TAB>
+bar.argos
+baz.argos
+foo.argos
+
+$ example --argos-files ba<TAB><TAB>
+bar.argos
+baz.argos
+```
+
+Inside a command, each option or subcommand should be separated by `,`. Whitespace is not required, but should be used to improve readability. **Trailing commas are not supported** (WIP).
+
+Top-level commands or options are, instead, separated by newline. Empty commands (those that do not have neither commands nor options) can have either empty braces or no braces at all.

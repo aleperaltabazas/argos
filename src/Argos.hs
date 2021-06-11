@@ -6,7 +6,7 @@ module Argos
   )
 where
 
-import Data.Argos (Layer(..), Argument(..), spread)
+import Data.Argos (Layer(..), Argument(..), layered)
 import Language.Argos.Compile
 import Language.Argos.Complete
 import Language.Argos.Parser (parseArgos, parseArgosFile)

@@ -10,9 +10,8 @@ extra-source-files:
     - README.md
     - ChangeLog.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis: Bash autocompletion script generation from a tree-like structure
+category: CLI, Options, Parsing
 
 description: Please see the README on GitHub at <https://github.com/aleperaltabazas/argos#readme>
 
