@@ -58,7 +58,7 @@ filesParser = Files <$> do
     return r
   whitespace
   return r
-  where regexLike = alphaNum <|> oneOf ".*-_"
+  where regexLike = alphaNum <|> oneOf ".*-_[]"
 
 directoriesParser :: Parser OptionArgument
 directoriesParser = do
