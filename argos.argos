@@ -1,6 +1,6 @@
 command(compile) {
   option(long(help), short(h)),
-  option(long(source), short(s), argument(FILES))
+  option(long(source), short(s), argument(files(*.argos)))
 }
 
 command(complete) {

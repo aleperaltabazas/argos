@@ -43,10 +43,29 @@ optionArgumentParser :: Parser OptionArgument
 optionArgumentParser = string "argument" ~> char '(' ~> op <~ char ')'
  where
   op :: Parser OptionArgument
-  op = toOptArg <$> (caseInsensitive "files" <|> caseInsensitive "directories")
+  op = filesParser <|> directoriesParser
 
-  toOptArg s = case map toLower s of
-    "files" -> Files
+filesParser :: Parser OptionArgument
+filesParser = Files <$> do
+  whitespace
+  caseInsensitive "files"
+  whitespace
+  r <- optionMaybe $ do
+    char '('
+    r <- many1 regexLike
+    whitespace
+    char ')'
+    return r
+  whitespace
+  return r
+  where regexLike = alphaNum <|> oneOf ".*-_"
+
+directoriesParser :: Parser OptionArgument
+directoriesParser = do
+  whitespace
+  caseInsensitive "directories"
+  whitespace
+  return Directories
 
 optionParser :: Parser Argument
 optionParser = do

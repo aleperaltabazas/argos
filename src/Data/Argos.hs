@@ -22,6 +22,8 @@ import Data.Maybe (fromMaybe, fromJust)
 
 data OptionArgument
   = Files
+  { regex :: Maybe String
+  }
   | Directories
   deriving (Show, Eq, Read)
 

@@ -39,16 +39,20 @@ spec = describe "Language.Argos.Parser" $ do
     it "returns an option with both the long and short names"
       $          parse optionParser "option" "option(long(blah), short(b))"
       `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Nothing }
-    it "returns an option with the long and the argument type"
-      $          parse optionParser "option" "option(long(blah), argument(FILES))"
-      `shouldBe` Right Option { long = "blah", short = Nothing, argument = Just Files }
+    it "returns an option with the long and the argument type" $ do
+      parse optionParser "option" "option(long(blah), argument(FILES))"
+        `shouldBe` Right Option { long = "blah", short = Nothing, argument = Just Files { regex = Nothing } }
+      parse optionParser "option" "option(long(blah), argument(files(*.hs)))"
+        `shouldBe` Right Option { long = "blah", short = Nothing, argument = Just Files { regex = Just "*.hs" } }
+      parse optionParser "option" "option(long(blah), argument(directories))"
+        `shouldBe` Right Option { long = "blah", short = Nothing, argument = Just Directories }
     it "returns an option with the long, the short and the argument type" $ do
       parse optionParser "option" "option(long(blah), short(b), argument(FILES))"
-        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files }
+        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files { regex = Nothing } }
       parse optionParser "option" "option(long(blah), short(b), argument(files))"
-        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files }
+        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files { regex = Nothing } }
       parse optionParser "option" "option(long(blah), argument(files), short(b))"
-        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files }
+        `shouldBe` Right Option { long = "blah", short = Just 'b', argument = Just Files { regex = Nothing } }
     it "fails" $ do
       parse optionParser "option" "option()" `shouldSatisfy` isLeft
       parse optionParser "option" "option(short(b), long(blah))" `shouldSatisfy` isLeft
