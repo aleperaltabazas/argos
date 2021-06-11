@@ -11,6 +11,7 @@ Argos
   - [Introduction](#introduction)
   - [Installation and Usage](#installation-and-usage)
   - [Syntax](#syntax)
+  - [How does it work?](#how-does-it-work)
 
 ## Introduction
 
@@ -18,9 +19,9 @@ Argos
 
 ## Installation and Usage
 
-Argos is provided both as a command-line tool as well as a Haskell library. To install the CLI, clone the repo and compile the program with the installer `install.sh`.
+Argos is provided both as a command-line tool as well as a Haskell library. To install the CLI, clone the repo and compile the program with the installer `install.sh`. Once it's installed, you can compile an argos file into an autocompletion script by running `argos compile my-program -s my-argos-file.argos` and moving the generated `my-program-completion.bash` to `/etc/bash_completion.d/`.
 
-For the Haskell library, you can install it with either `cabal install argos` or `stack install argos`, and the following imports:
+As for the Haskell library, you can install it with either `cabal install argos` or `stack install argos`, and the following imports:
 ```hs
 import Argos
 ```
@@ -118,3 +119,24 @@ baz.argos
 Inside a command, each option or subcommand should be separated by `,`. Whitespace is not required, but should be used to improve readability. **Trailing commas are not supported** (WIP).
 
 Top-level commands or options are, instead, separated by newline. Empty commands (those that do not have neither commands nor options) can have either empty braces or no braces at all.
+
+## How does it work?
+
+When you run `argos compile`, a bash completion script is generated with the following template:
+```bash
+#!/bin/bash
+
+_${progName}_completion()
+{
+    local cur len
+    cur=${COMP_WORDS[COMP_CWORD]}
+    ARGS="${COMP_WORDS[@]}"
+    
+    RES=$(argos complete ${progName} --options "$ARGS")
+    COMPREPLY=($(compgen -W "$RES" -- "$cur"))
+}
+
+complete -F _${progName}_completion ${progName}
+```
+
+At the same time, the argos file is parsed and a simplified version of it is saved as `~/.config/argos/progName.data`. This file is then read whenever `argos complete progName` is called. Argos then traverses the tree with the passed options, and upon reaching its deepest levels returns all possible autocompletions.
