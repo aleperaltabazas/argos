@@ -4,6 +4,7 @@
 module Data.Argos
   ( Argument(..)
   , Layer(..)
+  , OptionArgument(..)
   , LayeredArguments
   , spread
   , merge
@@ -19,6 +20,11 @@ import qualified Data.Map as Map
 import qualified Data.Map.Extra as Map
 import Data.Maybe (fromMaybe, fromJust)
 
+data OptionArgument
+  = Files
+  | Directories
+  deriving (Show, Eq, Read)
+
 data Argument
   = Command
   { name :: String
@@ -27,6 +33,7 @@ data Argument
   | Option
   { long :: String
   , short :: Maybe Char
+  , argument :: Maybe OptionArgument
   } deriving (Show, Eq, Read)
 
 data Layer

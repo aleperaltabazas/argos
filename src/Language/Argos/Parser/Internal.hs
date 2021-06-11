@@ -3,8 +3,10 @@
 module Language.Argos.Parser.Internal where
 
 import Data.Argos
+import Data.Char
 import Data.Maybe
 import Text.Parsec
+import Text.Parsec.Perm
 import Text.Parsec.String (Parser)
 
 (<<) :: Applicative f => f a -> f b -> f a
@@ -37,6 +39,15 @@ longParser = string "long" ~> char '(' ~> nameParser <~ char ')'
 shortParser :: Parser Char
 shortParser = string "short" ~> char '(' ~> letter <~ char ')'
 
+optionArgumentParser :: Parser OptionArgument
+optionArgumentParser = string "argument" ~> char '(' ~> op <~ char ')'
+ where
+  op :: Parser OptionArgument
+  op = toOptArg <$> (caseInsensitive "files" <|> caseInsensitive "directories")
+
+  toOptArg s = case map toLower s of
+    "files" -> Files
+
 optionParser :: Parser Argument
 optionParser = do
   whitespace
@@ -44,10 +55,22 @@ optionParser = do
   whitespace
   long <- longParser
   whitespace
-  short <- optionMaybe (char ',' ~> shortParser)
+  (short, argument) <- permute ((,) <$?> (Nothing, shortOpt) <|?> (Nothing, optArg))
   whitespace
   char ')'
   return Option { .. }
+ where
+  optArg = do
+    whitespace
+    a <- try $ optionMaybe (char ',' ~> optionArgumentParser)
+    whitespace
+    return a
+  shortOpt = do
+    whitespace
+    s <- try $ optionMaybe (char ',' ~> shortParser)
+    whitespace
+    return s
+
 
 commandParser :: Parser Argument
 commandParser = do
@@ -71,3 +94,6 @@ commandParser = do
     char '}'
     whitespace
     return arguments
+
+caseInsensitive :: String -> Parser String
+caseInsensitive = mapM (\c -> char (toLower c) <|> char (toUpper c))

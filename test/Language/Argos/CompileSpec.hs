@@ -19,11 +19,17 @@ spec = afterAll_ cleanup $ describe "compile" $ it "saves the show of the parsed
     arguments =
       [ Command
         { name      = "compile"
-        , arguments = [Option { long = "help", short = Just 'h' }, Option { long = "source", short = Just 's' }]
+        , arguments =
+          [ Option { long = "help", short = Just 'h', argument = Nothing }
+          , Option { long = "source", short = Just 's', argument = Nothing }
+          ]
         }
       , Command
         { name      = "complete"
-        , arguments = [Option { long = "help", short = Just 'h' }, Option { long = "options", short = Just 'o' }]
+        , arguments =
+          [ Option { long = "help", short = Just 'h', argument = Nothing }
+          , Option { long = "options", short = Just 'o', argument = Nothing }
+          ]
         }
       ]
   compile "argos-test" arguments
