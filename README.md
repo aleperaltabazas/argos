@@ -9,7 +9,10 @@ Argos
 - [Argos](#argos)
 - [Contents](#contents)
   - [Introduction](#introduction)
-  - [Installation and Usage](#installation-and-usage)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Command line tool](#command-line-tool)
+    - [Library](#library)
   - [Syntax](#syntax)
   - [How does it work?](#how-does-it-work)
 
@@ -17,13 +20,27 @@ Argos
 
 `argos` is a command line tool to programatically generate an autocompletion script from a tree-like structure of arbitrary depth. 
 
-## Installation and Usage
+## Installation
 
-Argos is provided both as a command-line tool as well as a Haskell library. To install the CLI, clone the repo and compile the program with the installer `install.sh`. Once it's installed, you can compile an argos file into an autocompletion script by running `argos compile my-program -s my-argos-file.argos` and moving the generated `my-program-completion.bash` to `/etc/bash_completion.d/`.
+Argos is provided both as a command-line tool as well as a Haskell library. To install the CLI, clone the repo and compile the program with the installer `install.sh`.
 
-As for the Haskell library, you can install it with either `cabal install argos` or `stack install argos`, and the following imports:
+As for the Haskell library, you can install it with either `cabal install argos` or `stack install argos` (this will compile and add the `argos` executable to the path, too).
+
+## Usage
+
+### Command line tool
+
+Wether it was installed with Stack or the repo installer, you can now compile an argos file into an autocompletion script by running `argos compile my-program -s my-argos-file.argos`. This will generate a file `my-program-completion.bash`, which you then should move to `/etc/bash_completion.d/` and then source it `source /etc/bas_completion.d/my-program-completion-bash`.
+
+
+### Library
+
+Simply import the `Argos` module, which includes everything you need to compile and install any argos files:
 ```hs
-import Argos
+parseArgos :: String -> Either ParseError [Argument]
+parseArgosFile :: FilePath -> IO (Either ParseError [Argument])
+compile :: String -> [Argument] -> IO ()
+complete :: String -> [String] -> IO [String]
 ```
 
 ## Syntax
@@ -57,12 +74,17 @@ Argos makes a distinction between commands and options, each denoted by their re
 Moreover, options can receive an optional `argument`. This can be one of `directories` or `files`. The first one will return all directories in current directory when the option is completed and autocomplete is prompted:
 ```argos
 command(example) {
+  options(long(files), argument(files)),
+  options(long(argos-files), arguments(files(.*[.]argos)))
   option(long(dir), argument(directories)),
 }
 ```
 
 ```bash
 $ l
+bar        foo
+bar.argos  foo.argos
+baz.argos  qux
 bin/       tests/
 documents/ workspace/
 downloads/
@@ -80,19 +102,8 @@ downloads/
 ```
 
 Meanwhile, `files` can receive an optional regex to filter files. If no regex is supplied, all files are listed:
-```argos
-command(example) {
-  options(long(files), argument(files)),
-  options(long(argos-files), arguments(files(.*[.]argos)))
-}
-```
 
 ```bash
-$ l
-bar       foo
-bar.argos foo.argos
-baz.argos qux
-
 $ example --files <TAB><TAB>
 bar
 bar.argos
@@ -118,7 +129,7 @@ baz.argos
 
 Inside a command, each option or subcommand should be separated by `,`. Whitespace is not required, but should be used to improve readability. **Trailing commas are not supported** (WIP).
 
-Top-level commands or options are, instead, separated by newline. Empty commands (those that do not have neither commands nor options) can have either empty braces or no braces at all.
+Top-level commands or options are, instead, separated by newline. Empty commands (those that do not have neither sub-commands nor options) can have either empty braces or no braces at all.
 
 ## How does it work?
 
@@ -139,4 +150,6 @@ _${progName}_completion()
 complete -F _${progName}_completion ${progName}
 ```
 
-At the same time, the argos file is parsed and a simplified version of it is saved as `~/.config/argos/progName.data`. This file is then read whenever `argos complete progName` is called. Argos then traverses the tree with the passed options, and upon reaching its deepest levels returns all possible autocompletions.
+Whenever `<TAB><TAB>` is hit for a command that has an autocompletion script, it will run it and generate the output as a list. For more information about programmable autocompletion, you can refer to the [GNU article](https://www.gnu.org/software/bash/manual/html_node/Programmable-Completion.html) or the [wikipedia article](https://en.wikipedia.org/wiki/Command-line_completion).
+
+Thus, when hitting `<TAB><TAB>` on a command that argos has previously compiled, will then call `argos complete your-prog-name`, along with any already passed options. Argos then traverses the tree with the passed options, and returns the correspondent output in the leaf.

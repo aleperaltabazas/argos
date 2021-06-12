@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 485670ee87af6d0555bb410188199be438624c0ab4be7069420240c95b162b48
+-- hash: a8b31540461860b625a4cf1574af0a29bdfe18e6ef69f6f334df6d8e7b43bf76
 
 name:           argos
-version:        1.0.0
+version:        2.0.0
 synopsis:       Bash autocompletion script generation from a tree-like structure
 description:    Please see the README on GitHub at <https://github.com/aleperaltabazas/argos#readme>
 category:       CLI, Options, Parsing
