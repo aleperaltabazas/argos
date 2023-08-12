@@ -2,12 +2,12 @@
 
 module Language.Argos.CompleteSpec where
 
-import Data.String.Interpolate (i)
-import Language.Argos.Compile
-import Language.Argos.Complete
-import Language.Argos.Parser
-import System.Directory
-import Test.Hspec
+import           Data.String.Interpolate (i)
+import           Language.Argos.Compile
+import           Language.Argos.Complete
+import           Language.Argos.Parser
+import           System.Directory
+import           Test.Hspec
 
 cleanup = do
   h <- getHomeDirectory
@@ -44,10 +44,10 @@ spec = beforeAll_ setup $ afterAll_ cleanup $ describe "complete" $ do
     actual `shouldBe` ["--help", "-h", "--options", "-o"]
   it "returns the 'foo' 'bar' and 'baz' when 'compile' and '-s' are passed" $ withCurrentDirectory "argos-test" $ do
     actual <- complete "argos-test" ["compile", "-s"]
-    actual `shouldBe` ["foo.argos", "baz.argos", "bar.argos"]
+    actual `shouldMatchList` ["foo.argos", "baz.argos", "bar.argos"]
   it "returns the 'bar' and 'baz' when 'compile', '-s' and 'b' are passed" $ withCurrentDirectory "argos-test" $ do
     actual <- complete "argos-test" ["compile", "-s", "b"]
-    actual `shouldBe` ["baz.argos", "bar.argos"]
+    actual `shouldMatchList` ["baz.argos", "bar.argos"]
   it "returns an empty list when 'compile', '-s' and 'bar.argos' are passed" $ withCurrentDirectory "argos-test" $ do
     actual <- complete "argos-test" ["compile", "-s", "-b", "bar.argos"]
     actual `shouldBe` [" "]

@@ -17,7 +17,7 @@ compile progName arguments = do
   createDirectoryIfMissing True acd
   writeFile (acd ++ "/" ++ progName ++ ".data") $ show arguments
   let
-    script = [i|#!/bin/bash
+    script = [i|\#!/bin/bash
 
 _#{progName}_completion()
 {
